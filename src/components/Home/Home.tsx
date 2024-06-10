@@ -9,10 +9,11 @@ import { AppDispatch } from "../../features/store";
 
 const Home = () => {
   const dispatch = useDispatch<AppDispatch>();
-
+  const movieText = "harry";
+  const showText = "Friends";
   useEffect(() => {
-    dispatch(fetchAsyncMovies());
-    dispatch(fetchAsyncShows());
+    dispatch(fetchAsyncMovies(movieText));
+    dispatch(fetchAsyncShows(showText));
   }, [dispatch]);
   return (
     <div>

@@ -96,10 +96,9 @@ const initialState: MoviesState = {
 
 export const fetchAsyncMovies = createAsyncThunk(
   "movies/fetchAsyncMovies",
-  async () => {
-    const movieText = "harry";
+  async (text: string) => {
     const response = await movieApi.get(
-      `?apikey=${APIKey}&s=${movieText}&type=movie`
+      `?apikey=${APIKey}&s=${text}&type=movie`
     );
     return response.data;
   }
@@ -107,10 +106,9 @@ export const fetchAsyncMovies = createAsyncThunk(
 
 export const fetchAsyncShows = createAsyncThunk(
   "movies/fetchAsyncShows",
-  async () => {
-    const movieText = "friends";
+  async (text: string) => {
     const response = await movieApi.get(
-      `?apikey=${APIKey}&s=${movieText}&type=series`
+      `?apikey=${APIKey}&s=${text}&type=series`
     );
     return response.data;
   }
@@ -128,8 +126,8 @@ export const movieSlice = createSlice({
   name: "movies",
   initialState,
   reducers: {
-    addMovies: (state: MoviesState, action: PayloadAction<MoviePayload>) => {
-      state.movies = action.payload;
+    removeSelectedMovieOrShow(state: MoviesState) {
+      state.selectedMovieOrShow = initialState.selectedMovieOrShow;
     },
   },
   extraReducers: (builder) => {
@@ -155,7 +153,7 @@ export const movieSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { addMovies } = movieSlice.actions;
+export const { removeSelectedMovieOrShow } = movieSlice.actions;
 
 export const GetAllMovies = (state: RootState) => state.movies.movies;
 export const GetAllShows = (state: RootState) => state.movies.shows;
