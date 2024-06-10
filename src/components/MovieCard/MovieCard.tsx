@@ -1,22 +1,24 @@
-import React from "react";
 import { Movie } from "../../common/models/model";
 import "./MovieCard.scss";
+import { Link } from "react-router-dom";
 
-const MovieCard = (props: { movie: Movie }) => {
-  const { movie } = props;
+const MovieCard = (props: { data: Movie }) => {
+  const { data } = props;
   return (
     <div className="card-item">
-      <div className="card-inner">
-        <div className="card-top">
-          <img src={movie.Poster} alt={movie.Title} />
-        </div>
-        <div className="card-bottom">
-          <div className="card-info">
-            <h4>{movie.Title}</h4>
-            <p>{movie.Year}</p>
+      <Link to={`/movie/${data.imdbID}`}>
+        <div className="card-inner">
+          <div className="card-top">
+            <img src={data.Poster} alt={data.Title} />
+          </div>
+          <div className="card-bottom">
+            <div className="card-info">
+              <h4>{data.Title}</h4>
+              <p>{data.Year}</p>
+            </div>
           </div>
         </div>
-      </div>
+      </Link>
     </div>
   );
 };
