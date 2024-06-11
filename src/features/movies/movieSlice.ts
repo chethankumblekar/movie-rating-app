@@ -47,6 +47,7 @@ export interface MoviesState {
   movies: MoviePayload;
   shows: MoviePayload;
   selectedMovieOrShow: MovieOrShowDetail;
+  loding: boolean;
 }
 
 const initialState: MoviesState = {
@@ -92,6 +93,7 @@ const initialState: MoviesState = {
     Website: "",
     Response: "",
   },
+  loding: false,
 };
 
 export const fetchAsyncMovies = createAsyncThunk(
@@ -129,6 +131,12 @@ export const movieSlice = createSlice({
     removeSelectedMovieOrShow(state: MoviesState) {
       state.selectedMovieOrShow = initialState.selectedMovieOrShow;
     },
+    updateMovieOrShowLoadingState(
+      state: MoviesState,
+      action: PayloadAction<boolean>
+    ) {
+      state.loding = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAsyncMovies.pending, (_state) => {
@@ -153,12 +161,14 @@ export const movieSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { removeSelectedMovieOrShow } = movieSlice.actions;
+export const { removeSelectedMovieOrShow, updateMovieOrShowLoadingState } =
+  movieSlice.actions;
 
 export const GetAllMovies = (state: RootState) => state.movies.movies;
 export const GetAllShows = (state: RootState) => state.movies.shows;
 export const GetselectedMovieOrShow = (state: RootState) =>
   state.movies.selectedMovieOrShow;
+export const GetloadingState = (state: RootState) => state.movies.loding;
 
 //this will export all the reducers
 export default movieSlice.reducer;
