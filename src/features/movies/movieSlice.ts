@@ -1,54 +1,8 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Movie } from "../../common/models/model";
 import movieApi from "../../common/apis/movieApi";
 import { APIKey } from "../../common/apis/MovieApiKey";
 import { RootState } from "../store";
-
-interface MoviePayload {
-  Search: Movie[];
-  totalResults: string;
-  Response: string;
-}
-
-interface MovieOrShowDetail {
-  Title: string;
-  Year: string;
-  Rated: string;
-  Released: string;
-  Runtime: string;
-  Genre: string;
-  Director: string;
-  Writer: string;
-  Actors: string;
-  Plot: string;
-  Language: string;
-  Country: string;
-  Awards: string;
-  Poster: string;
-  Ratings: [
-    {
-      Source: string;
-      Value: string;
-    }
-  ];
-  Metascore: string;
-  imdbRating: string;
-  imdbVotes: string;
-  imdbID: string;
-  Type: string;
-  DVD: string;
-  BoxOffice: string;
-  Production: string;
-  Website: string;
-  Response: string;
-}
-
-export interface MoviesState {
-  movies: MoviePayload;
-  shows: MoviePayload;
-  selectedMovieOrShow: MovieOrShowDetail;
-  loding: boolean;
-}
+import { MoviesState } from "./state";
 
 const initialState: MoviesState = {
   movies: {
@@ -93,7 +47,7 @@ const initialState: MoviesState = {
     Website: "",
     Response: "",
   },
-  loding: false,
+  loading: 0,
 };
 
 export const fetchAsyncMovies = createAsyncThunk(
@@ -133,29 +87,48 @@ export const movieSlice = createSlice({
     },
     updateMovieOrShowLoadingState(
       state: MoviesState,
-      action: PayloadAction<boolean>
+      action: PayloadAction<number>
     ) {
-      state.loding = action.payload;
+      state.loading = action.payload;
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchAsyncMovies.pending, (_state) => {
+    builder.addCase(fetchAsyncMovies.pending, (state) => {
+      state.loading = state.loading + 1;
       console.log("pending");
     });
     builder.addCase(fetchAsyncMovies.fulfilled, (state, action) => {
       console.log("fulfilled");
-      return { ...state, movies: action.payload };
+      return { ...state, movies: action.payload, loading: state.loading - 1 };
     });
     builder.addCase(fetchAsyncMovies.rejected, (_state) => {
       console.log("rejected");
     });
+    builder.addCase(fetchAsyncShows.pending, (state) => {
+      state.loading = state.loading + 1;
+      console.log("pending");
+    });
     builder.addCase(fetchAsyncShows.fulfilled, (state, action) => {
       console.log("fulfilled");
-      return { ...state, shows: action.payload };
+      return { ...state, shows: action.payload, loading: state.loading - 1 };
+    });
+    builder.addCase(fetchAsyncShows.rejected, (_state) => {
+      console.log("rejected");
+    });
+    builder.addCase(fetchAsyncMovieOrShowDetail.pending, (state) => {
+      state.loading = state.loading + 1;
+      console.log("pending");
     });
     builder.addCase(fetchAsyncMovieOrShowDetail.fulfilled, (state, action) => {
       console.log("fulfilled");
-      return { ...state, selectedMovieOrShow: action.payload };
+      return {
+        ...state,
+        selectedMovieOrShow: action.payload,
+        loading: state.loading - 1,
+      };
+    });
+    builder.addCase(fetchAsyncMovieOrShowDetail.rejected, (_state) => {
+      console.log("rejected");
     });
   },
 });
@@ -168,7 +141,7 @@ export const GetAllMovies = (state: RootState) => state.movies.movies;
 export const GetAllShows = (state: RootState) => state.movies.shows;
 export const GetselectedMovieOrShow = (state: RootState) =>
   state.movies.selectedMovieOrShow;
-export const GetloadingState = (state: RootState) => state.movies.loding;
+export const GetloadingState = (state: RootState) => state.movies.loading;
 
 //this will export all the reducers
 export default movieSlice.reducer;

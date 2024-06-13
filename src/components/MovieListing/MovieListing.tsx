@@ -9,6 +9,7 @@ import {
 } from "../../features/movies/movieSlice";
 import Slider from "react-slick";
 import { settings } from "../../common/settings";
+import Spinner from "../../common/components/spinner";
 
 const MovieListing = () => {
   const movies = useSelector(GetAllMovies);
@@ -31,8 +32,8 @@ const MovieListing = () => {
     );
   return (
     <div className="movie-wrapper">
-      {loading ? (
-        <div>...loading</div>
+      {loading > 0 ? (
+        <Spinner />
       ) : (
         <>
           <div className="movie-list">

@@ -3,17 +3,20 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../features/store";
 import {
+  GetloadingState,
   GetselectedMovieOrShow,
   fetchAsyncMovieOrShowDetail,
   removeSelectedMovieOrShow,
 } from "../../features/movies/movieSlice";
 import "./MovieDetail.scss";
+import Spinner from "../../common/components/spinner";
 
 const MovieDetail = () => {
   const { imdbID } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
   const data = useSelector(GetselectedMovieOrShow);
+  const loading = useSelector(GetloadingState);
 
   useEffect(() => {
     if (imdbID) dispatch(fetchAsyncMovieOrShowDetail(imdbID));
@@ -23,8 +26,8 @@ const MovieDetail = () => {
   }, [dispatch, imdbID]);
   return (
     <div className="movie-section">
-      {Object.keys(data).length === 0 ? (
-        <div>...loading</div>
+      {loading > 0 ? (
+        <Spinner />
       ) : (
         <>
           <div className="section-left">
